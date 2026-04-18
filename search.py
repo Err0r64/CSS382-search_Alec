@@ -18,7 +18,7 @@ Pacman agents (in searchAgents.py).
 """
 
 import util
-
+####### STUDENT NO TOUCHIE #########
 class SearchProblem:
     """
     This class outlines the structure of a search problem, but doesn't implement
@@ -61,6 +61,7 @@ class SearchProblem:
         """
         util.raiseNotDefined()
 
+########### WE CODE BELOW THIS LINE IN search.py ##########
 
 def tinyMazeSearch(problem):
     """
@@ -87,6 +88,9 @@ def depthFirstSearch(problem):
     print("Start's successors:", problem.getSuccessors(problem.getStartState()))
     """
     "*** YOUR CODE HERE ***"
+
+    Stack = util.Stack()
+
     util.raiseNotDefined()
 
 def breadthFirstSearch(problem):
