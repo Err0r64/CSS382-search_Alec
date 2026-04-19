@@ -335,7 +335,7 @@ class CornersProblem(search.SearchProblem):
         self._expanded = 0  # DO NOT CHANGE; Number of search nodes expanded
         # Please add any code here which you would like to use
         # in initializing the problem
-        "*** YOUR CODE HERE ***"
+        
 
     def getStartState(self):
         """
@@ -343,15 +343,13 @@ class CornersProblem(search.SearchProblem):
         space)
         """
 
-        return self.startingPosition, ()  #
-        util.raiseNotDefined()
+        return self.startingPosition, () # startPosition, tuple of visited corners
 
     def isGoalState(self, state):
         """
         Returns whether this search state is a goal state of the problem.
         """
-        return len(state[1]) == 4  # Default to trivial solution
-        util.raiseNotDefined()
+        return len(state[1]) == 4  # true when visited all 4 corners
 
     def getSuccessors(self, state):
         """
