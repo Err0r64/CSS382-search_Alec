@@ -4,7 +4,7 @@
 # educational purposes provided that (1) you do not distribute or publish
 # solutions, (2) you retain this notice, and (3) you provide clear
 # attribution to UC Berkeley, including a link to http://ai.berkeley.edu.
-# 
+#
 # Attribution Information: The Pacman AI projects were developed at UC Berkeley.
 # The core projects and autograders were primarily created by John DeNero
 # (denero@cs.berkeley.edu) and Dan Klein (klein@cs.berkeley.edu).
@@ -18,6 +18,8 @@ Pacman agents (in searchAgents.py).
 """
 
 import util
+
+
 ####### STUDENT NO TOUCHIE #########
 class SearchProblem:
     """
@@ -61,7 +63,9 @@ class SearchProblem:
         """
         util.raiseNotDefined()
 
+
 ########### WE CODE BELOW THIS LINE IN search.py ##########
+
 
 def tinyMazeSearch(problem):
     """
@@ -69,9 +73,11 @@ def tinyMazeSearch(problem):
     sequence of moves will be incorrect, so only use this for tinyMaze.
     """
     from game import Directions
+
     s = Directions.SOUTH
     w = Directions.WEST
-    return  [s, s, w, s, w, w, s, w]
+    return [s, s, w, s, w, w, s, w]
+
 
 def depthFirstSearch(problem):
     """
@@ -87,21 +93,55 @@ def depthFirstSearch(problem):
     print("Is the start a goal?", problem.isGoalState(problem.getStartState()))
     print("Start's successors:", problem.getSuccessors(problem.getStartState()))
     """
-    "*** YOUR CODE HERE ***"
 
-    Stack = util.Stack()
+    start_state = problem.getStartState()
+    if start_state is None or problem.isGoalState(start_state):
+        return []
 
-    util.raiseNotDefined()
+    unexplored = util.Stack()
+    # Each stack entry stores (state, path_to_state).
+    # push start state and empty path to frontier
+    #     Each time an unexplored state is pushed, the path to that state is appended to the actions
+    #     list. which will be returned when the goal is found.
+    unexplored.push((start_state, [])) 
+    explored = set()
+
+    # While there is an unexplored state.
+    while not unexplored.isEmpty():
+        # Pop an unexplored state from the stack and the path to that state. from current state.
+        state, path = unexplored.pop()
+
+        # skip if state has already been explored
+        if state in explored:
+            continue
+        
+        # mark state explored
+        explored.add(state)
+
+        # If the state is a goal, return the path to that state.
+        if problem.isGoalState(state):
+            return path
+
+        # For each state adjacent to current, add to stack if unexplored,
+        #     and add the action to get there to the path from current state.
+        for successor, action, _ in problem.getSuccessors(state):
+            if successor not in explored:
+                unexplored.push((successor, path + [action]))
+
+    return [] # if no solution is found, return empty list of actions
+
 
 def breadthFirstSearch(problem):
     """Search the shallowest nodes in the search tree first."""
     "*** YOUR CODE HERE ***"
     util.raiseNotDefined()
 
+
 def uniformCostSearch(problem):
     """Search the node of least total cost first."""
     "*** YOUR CODE HERE ***"
     util.raiseNotDefined()
+
 
 def nullHeuristic(state, problem=None):
     """
@@ -109,6 +149,7 @@ def nullHeuristic(state, problem=None):
     goal in the provided SearchProblem.  This heuristic is trivial.
     """
     return 0
+
 
 def aStarSearch(problem, heuristic=nullHeuristic):
     """Search the node that has the lowest combined cost and heuristic first."""
