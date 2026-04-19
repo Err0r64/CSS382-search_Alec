@@ -234,6 +234,7 @@ def aStarSearch(problem, heuristic=nullHeuristic):
         # (Successor, action, stepCost), minQ uses stepCost
         for successor, action, stepCost in problem.getSuccessors(state):
             if successor not in explored:
+                # Heuristic is added to the cost
                 cost = problem.getCostOfActions(path + [action]) + heuristic(
                     successor, problem
                 )
