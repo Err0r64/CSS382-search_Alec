@@ -342,8 +342,8 @@ class CornersProblem(search.SearchProblem):
         Returns the start state (in your state space, not the full Pacman state
         space)
         """
-        
-        return self.startingPosition, () #
+
+        return self.startingPosition, ()  #
         util.raiseNotDefined()
 
     def isGoalState(self, state):
@@ -363,8 +363,10 @@ class CornersProblem(search.SearchProblem):
             state, 'action' is the action required to get there, and 'stepCost'
             is the incremental cost of expanding to that successor
         """
-
+        currentPosition, visitedCorners = state
         successors = []
+        # For each action, we need to see if it's legal, and then figure out if we're adding a new 
+        #   corner to the visited list
         for action in [
             Directions.NORTH,
             Directions.SOUTH,
@@ -373,12 +375,26 @@ class CornersProblem(search.SearchProblem):
         ]:
             # Add a successor state to the successor list if the action is legal
             # Here's a code snippet for figuring out whether a new position hits a wall:
-            #   x,y = currentPosition
-            #   dx, dy = Actions.directionToVector(action)
-            #   nextx, nexty = int(x + dx), int(y + dy)
-            #   hitsWall = self.walls[nextx][nexty]
+            x, y = currentPosition
+            dx, dy = Actions.directionToVector(action)
+            nextx, nexty = int(x + dx), int(y + dy)
+            hitsWall = self.walls[nextx][nexty]
 
-            "*** YOUR CODE HERE ***"
+            # If it doesn't hit a wall, figure out if we're adding a new corner to the visited list
+            if not hitsWall:
+                # next legal position
+                nextPosition = (nextx, nexty)
+                
+                # the next list of visited corners, which is the same as the current list, 
+                #   unless we're adding a new corner
+                nextVisitedCorners = visitedCorners
+                # if nextPosition is a corner and we haven't visited it yet, 
+                #   add it to the list of visited corners
+                if nextPosition in self.corners and nextPosition not in visitedCorners:
+                    nextVisitedCorners = visitedCorners + (nextPosition,)
+                # return the list of successors, which are in the form 
+                #   ((nextPosition, nextVisitedCorners), action, stepCost)
+                successors.append(((nextPosition, nextVisitedCorners), action, 1))
 
         self._expanded += 1  # DO NOT CHANGE
         return successors
