@@ -92,6 +92,12 @@ def depthFirstSearch(problem):
     print("Start:", problem.getStartState())
     print("Is the start a goal?", problem.isGoalState(problem.getStartState()))
     print("Start's successors:", problem.getSuccessors(problem.getStartState()))
+
+    getStartState() returns the start pair (x, y) starting position for the search problem.
+    isGoalState(state) returns True if and only if the state is a valid goal state.
+    getSuccessors(state) returns a list of triples, (successor, action, stepCost),
+        where 'successor' is a successor to the current state, 'action' is the action required to
+        get there, and 'stepCost' is the incremental cost of expanding to that successor.
     """
 
     start_state = problem.getStartState()
@@ -103,7 +109,7 @@ def depthFirstSearch(problem):
     # push start state and empty path to frontier
     #     Each time an unexplored state is pushed, the path to that state is appended to the actions
     #     list. which will be returned when the goal is found.
-    unexplored.push((start_state, [])) 
+    unexplored.push((start_state, []))
     explored = set()
 
     # While there is an unexplored state.
@@ -114,7 +120,7 @@ def depthFirstSearch(problem):
         # skip if state has already been explored
         if state in explored:
             continue
-        
+
         # mark state explored
         explored.add(state)
 
@@ -124,17 +130,43 @@ def depthFirstSearch(problem):
 
         # For each state adjacent to current, add to stack if unexplored,
         #     and add the action to get there to the path from current state.
+        # (Successor, action, stepCost)
         for successor, action, _ in problem.getSuccessors(state):
             if successor not in explored:
                 unexplored.push((successor, path + [action]))
 
-    return [] # if no solution is found, return empty list of actions
+    return []  # if no solution is found, return empty list of actions
 
 
 def breadthFirstSearch(problem):
     """Search the shallowest nodes in the search tree first."""
     "*** YOUR CODE HERE ***"
-    util.raiseNotDefined()
+
+    start_state = problem.getStartState()
+    if start_state is None or problem.isGoalState(start_state):
+        return []
+
+    # BFD uses queue
+    unexplored = util.Queue()
+    unexplored.push((start_state, []))  # same reasoning as DFS for state stroage
+    explored = set()  # same reasoning as DFS for explored set
+
+    while not unexplored.isEmpty():
+        state, path = unexplored.pop()
+
+        if state in explored:
+            continue
+
+        explored.add(state)
+
+        if problem.isGoalState(state):
+            return path
+        # (Successor, action, stepCost)
+        for successor, action, _ in problem.getSuccessors(state):
+            if successor not in explored:
+                unexplored.push((successor, path + [action]))
+
+    return []
 
 
 def uniformCostSearch(problem):
