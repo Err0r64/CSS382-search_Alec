@@ -335,7 +335,6 @@ class CornersProblem(search.SearchProblem):
         self._expanded = 0  # DO NOT CHANGE; Number of search nodes expanded
         # Please add any code here which you would like to use
         # in initializing the problem
-        
 
     def getStartState(self):
         """
@@ -343,7 +342,7 @@ class CornersProblem(search.SearchProblem):
         space)
         """
 
-        return self.startingPosition, () # startPosition, tuple of visited corners
+        return self.startingPosition, ()  # startPosition, tuple of visited corners
 
     def isGoalState(self, state):
         """
@@ -363,7 +362,7 @@ class CornersProblem(search.SearchProblem):
         """
         currentPosition, visitedCorners = state
         successors = []
-        # For each action, we need to see if it's legal, and then figure out if we're adding a new 
+        # For each action, we need to see if it's legal, and then figure out if we're adding a new
         #   corner to the visited list
         for action in [
             Directions.NORTH,
@@ -382,15 +381,15 @@ class CornersProblem(search.SearchProblem):
             if not hitsWall:
                 # next legal position
                 nextPosition = (nextx, nexty)
-                
-                # the next list of visited corners, which is the same as the current list, 
+
+                # the next list of visited corners, which is the same as the current list,
                 #   unless we're adding a new corner
                 nextVisitedCorners = visitedCorners
-                # if nextPosition is a corner and we haven't visited it yet, 
+                # if nextPosition is a corner and we haven't visited it yet,
                 #   add it to the list of visited corners
                 if nextPosition in self.corners and nextPosition not in visitedCorners:
                     nextVisitedCorners = visitedCorners + (nextPosition,)
-                # return the list of successors, which are in the form 
+                # return the list of successors, which are in the form
                 #   ((nextPosition, nextVisitedCorners), action, stepCost)
                 successors.append(((nextPosition, nextVisitedCorners), action, 1))
 
@@ -429,8 +428,30 @@ def cornersHeuristic(state, problem):
     corners = problem.corners  # These are the corner coordinates
     walls = problem.walls  # These are the walls of the maze, as a Grid (game.py)
 
-    "*** YOUR CODE HERE ***"
-    return 0  # Default to trivial solution
+    position, visitedCorners = state
+    unvisited = []
+
+    for c in corners:
+        if c not in visitedCorners:
+            unvisited.append(c)
+
+    if not unvisited:
+        return 0
+
+    # Greedy nearest-neighbor using Manhattan distance from current position
+    # through all unvisited corners. This is admissible because the true
+    # shortest path must be at least as long as the Manhattan distance to
+    # the nearest corner, and then must still reach all remaining corners.
+    total = 0
+    current = position
+    remaining = list(unvisited)
+    while remaining:
+        distances = [util.manhattanDistance(current, c) for c in remaining]
+        nearest_idx = distances.index(min(distances))
+        total += distances[nearest_idx]
+        current = remaining.pop(nearest_idx)
+
+    return total
 
 
 class AStarCornersAgent(SearchAgent):
@@ -538,8 +559,30 @@ def foodHeuristic(state, problem):
     problem.heuristicInfo['wallCount']
     """
     position, foodGrid = state
-    "*** YOUR CODE HERE ***"
-    return 0
+    foodList = foodGrid.asList()
+
+    # if no food left, then heuristic is 0
+    if not foodList:
+        return 0
+
+    # Use the maximum maze distance from Pacman to any food dot.
+    # This is admissible because Pacman must travel at least that far to
+    # reach the farthest food, and consistent since maze distance satisfies
+    # the triangle inequality.
+    # Cache BFS distances to avoid recomputation.
+    maxDist = 0
+    for food in foodList:
+        # Check cache
+        key = (position, food)
+        if key in problem.heuristicInfo:
+            dist = problem.heuristicInfo[key]
+        else:
+            dist = mazeDistance(position, food, problem.startingGameState)
+            problem.heuristicInfo[key] = dist
+        if dist > maxDist:
+            maxDist = dist
+
+    return maxDist
 
 
 class ClosestDotSearchAgent(SearchAgent):
