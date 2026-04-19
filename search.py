@@ -140,7 +140,6 @@ def depthFirstSearch(problem):
 
 def breadthFirstSearch(problem):
     """Search the shallowest nodes in the search tree first."""
-    "*** YOUR CODE HERE ***"
 
     start_state = problem.getStartState()
     if start_state is None or problem.isGoalState(start_state):

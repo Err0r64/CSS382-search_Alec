@@ -656,7 +656,7 @@ class AnyFoodSearchProblem(PositionSearchProblem):
         """
         x, y = state
 
-        "*** YOUR CODE HERE ***"
+       
         return self.food[x][y]
 
 
